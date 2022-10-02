@@ -1,11 +1,12 @@
-﻿using SistemaHospedagem.Models;
+﻿using SistemaHospedagem.Enums;
+using SistemaHospedagem.Models;
 using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
 
-Suite basicSuite = new("Basic", 1, 20.00m);
-Suite standardSuite = new("Standard", 3, 20.00m);
-Suite premiumSuite = new("Basic", 5, 20.00m);
+Suite basicSuite = new(SuiteTypeEnum.Basic, 1, 20.00m);
+Suite standardSuite = new(SuiteTypeEnum.Standard, 3, 20.00m);
+Suite premiumSuite = new(SuiteTypeEnum.Premium, 5, 20.00m);
 
 List<Suite> hotelRooms = new List<Suite>() { basicSuite, standardSuite, premiumSuite };
 
@@ -16,23 +17,32 @@ while (showMenu)
   Console.WriteLine("Sistema de hospedagem\n");
   Console.WriteLine("Escolha um opção pra prosseguir\n");
   Console.WriteLine("1. Cadastrar hóspedes;");
-  Console.WriteLine("2. Encerrar programa.");
+  Console.WriteLine("2. Encerrar programa.\n");
 
   switch (Console.ReadLine())
   {
     case "1":
       Console.Clear();
       Console.WriteLine("Sistema de hospedagem\n");
-      Console.WriteLine("Escolha sua suíte");
+      Console.WriteLine("Escolha sua suíte\n");
+
+      int suiteIndex = 0;
+
       foreach (var suite in hotelRooms)
       {
-        Console.WriteLine(suite.TipoSuite);
+        if (!suite.Occupied)
+        {
+          Console.WriteLine($"{suiteIndex}. {suite.TipoSuite} - Capacidade de {suite.Capacidade} hóspedes.");
+          suiteIndex++;
+        }
       }
       Console.WriteLine();
 
-      string inputSelectedSuite = Console.ReadLine().ToLower();
+      SuiteTypeEnum inputSelectedSuite = (SuiteTypeEnum) int.Parse(Console.ReadLine());
 
-      Suite selectedSuite = hotelRooms.Find(x => x.TipoSuite.ToLower() == inputSelectedSuite);
+      Suite selectedSuite = hotelRooms.Find(x => x.TipoSuite == inputSelectedSuite);
+
+      selectedSuite.ChangeOccupiedStatus();
 
       Console.Clear();
       Console.WriteLine("Sistema de hospedagem\n");
@@ -46,8 +56,10 @@ while (showMenu)
         string[] inputFullName = Console.ReadLine().Split(' ');
         string firstName = inputFullName[0];
         string lastName = inputFullName[1];
+        Console.Write("Digite o CPF do hóspede: ");
+        string inputCPF = Console.ReadLine();
 
-        Pessoa hospede = new(firstName, lastName);
+        Pessoa hospede = new(firstName, lastName, inputCPF);
         hospedes.Add(hospede);
       }
 
@@ -65,11 +77,13 @@ while (showMenu)
         Console.WriteLine($"- {hospede.NomeCompleto};");
       }
 
+      Console.WriteLine($"\nSuíte reservada: {selectedSuite.TipoSuite}");
+
       break;
 
     case "2":
       showMenu = false;
-      Console.WriteLine("Programa encerrado");
+      Console.WriteLine("\nPrograma encerrado");
       break;
   }
 
