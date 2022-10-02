@@ -26,7 +26,7 @@ while (showMenu)
       Console.WriteLine("Sistema de hospedagem\n");
       Console.WriteLine("Escolha sua suíte\n");
 
-      int suiteIndex = 0;
+      int suiteIndex = 1;
 
       foreach (var suite in hotelRooms)
       {
@@ -38,7 +38,16 @@ while (showMenu)
       }
       Console.WriteLine();
 
-      SuiteTypeEnum inputSelectedSuite = (SuiteTypeEnum) int.Parse(Console.ReadLine());
+      Console.WriteLine("Pessione 0 para retornar.");
+
+      int inputOption = int.Parse(Console.ReadLine());
+
+      if (inputOption == 0)
+      {
+        break;
+      }
+
+      SuiteTypeEnum inputSelectedSuite = (SuiteTypeEnum) inputOption - 1;
 
       Suite selectedSuite = hotelRooms.Find(x => x.TipoSuite == inputSelectedSuite);
 
